@@ -2,13 +2,14 @@ const Task = require('../model/TaskModel')
 
 const createTask = async(req,res)=>{
     try{
-        const {title, description, tags} = req.body
+        const {taskTitle, description, tags} = req.body
         const task = await Task.create(req.body)
         res.status(201).json({task})
 
     }catch(error){
-        console.error('Error creating task:',error)
-        res.status(500).json({message:error})
+        next(error)
+        // console.error('Error creating task:',error)
+        // res.status(500).json({message:error})
 
     }
 }

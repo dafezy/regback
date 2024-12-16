@@ -2,10 +2,12 @@ const express = require('express')
 const userRoute = require('./src/route/userRoute')
 const TaskRouter = require('./src/route/Task')
 require("dotenv").config()
-
+const mongoose = require('mongoose')
+const errorMiddleWare = require('./src/middleware/ErrorHandler')
 const app = express()
 
 app.use(express.json())
+
 
 // define a basic route
 app.get('/',(req,res)=>{
@@ -15,9 +17,11 @@ app.use("/api", userRoute)
 
 app.use("/api/task", TaskRouter)
 
+app.use(errorMiddleWare)
+
 
 // start the server
-const mongoose = require('mongoose')
+
 
 
 
