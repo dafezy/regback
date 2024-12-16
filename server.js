@@ -1,59 +1,55 @@
-const express = require('express')
-const userRoute = require('./src/route/userRoute')
-const TaskRouter = require('./src/route/Task')
-require("dotenv").config()
-const mongoose = require('mongoose')
-const errorMiddleWare = require('./src/middleware/ErrorHandler')
-const app = express()
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors'); // Add CORS middleware
+const dotenv = require('dotenv');
 
-app.use(express.json())
+// Importing Routes and Middlewares
+const userRoute = require('./src/route/userRoute');
+const TaskRouter = require('./src/route/Task');
+const errorMiddleWare = require('./src/middleware/ErrorHandler');
 
+// Load environment variables
+dotenv.config();
 
-// define a basic route
-app.get('/',(req,res)=>{
-    res.send('welcome to express.js')
-})
-app.use("/api", userRoute)
+const app = express();
 
-app.use("/api/task", TaskRouter)
+// Middleware
+app.use(express.json());
+app.use(cors()); // Allow requests from any origin
 
-app.use(errorMiddleWare)
+// Define a basic route
+app.get('/', (req, res) => {
+    res.send('Welcome to Express.js');
+});
 
+// Use Routes
+app.use('/api', userRoute);
+app.use('/api/task', TaskRouter);
 
-// start the server
+// Global Error Handler
+app.use(errorMiddleWare);
 
+// MongoDB Connection
+const connectDB = async () => {
+    const mongoUri = process.env.DB_URL;
 
-
-
-const connectDB = async ()=>{
-    const mongoUri = process.env.DB_URL
-
-    if(!mongoUri){
-        throw new Error('DB_URL is not defined in the environment variables')
+    if (!mongoUri) {
+        throw new Error('DB_URL is not defined in the environment variables');
     }
-    try{
+
+    try {
         await mongoose.connect(mongoUri);
         console.log('MongoDB connected successfully');
-    } catch (error){
-        console.error('MongoDB connection failed:', error);
-        process.exit(1);
-            //    exit process with failure
+    } catch (error) {
+        console.error('MongoDB connection failed:', error.message);
+        process.exit(1); // Exit process with failure
     }
-
 };
 
-connectDB()  
+connectDB();
 
-const PORT = 3000
-app.listen(PORT, ()=>{
-    console.log(`server is running on port http://localhost:${PORT}`)
-})
-
-
-// model 
-// represents the data layer and business logic of the application. manages data, rules,
-//  and logic , often interacting with the database. notifies the view of any updates in the data
-
-// controller
-// acts as the intermediary between the model and ViewTransition, handles user inputs, processes request 
-// and updates the model or view accordingly.
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
