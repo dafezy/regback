@@ -3,7 +3,7 @@ const { createTask, getSingleTask, updateTask, deleteTask, getTask } = require("
 const { authenticationToken } = require("../middleware/Jwt")
 const router = express.Router()
 
-router.post("/create",authenticationToken, createTask)
+router.post("/create", createTask)
 router.get("/singleTask/:id", getSingleTask)
 router.put("/updateTask/:id", updateTask)   
 router.delete("/deleteTask/:id", deleteTask) 
